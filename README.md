@@ -1,5 +1,7 @@
 # MacCleanScreen
 
+[![Build](https://github.com/lyu-arm/MacCleanScreen/actions/workflows/build.yml/badge.svg)](https://github.com/lyu-arm/MacCleanScreen/actions/workflows/build.yml)
+
 一个参考 State 工具交互思路、独立实现的极简 macOS 菜单栏清洁工具。它包含两个模式：
 
 - **清洁屏幕**：在所有显示器上显示纯黑遮罩，并锁定输入，方便观察灰尘与指纹；
@@ -32,3 +34,7 @@ macOS 的辅助功能权限用于拦截全局输入。电源键、Touch ID，以
 ## 许可
 
 MIT License
+
+## 自动构建
+
+每次推送到 `master` 分支或创建 Pull Request 时，GitHub Actions 会在 macOS 环境中编译并验证应用。也可以在仓库的 Actions 页面手动运行工作流。成功后可在对应运行记录的 Artifacts 区域下载 `MacCleanScreen.zip`，构建产物保留 14 天。

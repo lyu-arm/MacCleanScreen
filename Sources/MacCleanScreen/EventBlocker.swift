@@ -11,18 +11,7 @@ final class EventBlocker {
     func start() -> Bool {
         guard eventTap == nil else { return true }
 
-        let eventTypes: [CGEventType] = [
-            .leftMouseDown, .leftMouseUp,
-            .rightMouseDown, .rightMouseUp,
-            .mouseMoved, .leftMouseDragged, .rightMouseDragged,
-            .keyDown, .keyUp, .flagsChanged,
-            .scrollWheel,
-            .tabletPointer, .tabletProximity,
-            .otherMouseDown, .otherMouseUp, .otherMouseDragged
-        ]
-        let mask = eventTypes.reduce(CGEventMask(0)) { partialResult, eventType in
-            partialResult | (CGEventMask(1) << eventType.rawValue)
-        }
+        let mask = CGEventMask.max
 
         let callback: CGEventTapCallBack = { _, type, event, userInfo in
             guard let userInfo else { return nil }

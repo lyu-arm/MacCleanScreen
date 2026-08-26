@@ -10,7 +10,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var smokeTestRunner: AutomatedSmokeTestRunner?
 
     private let promotionURL = URL(string: "https://autopixel.qzz.io/blackcat")!
-    private let promotionShownKey = "promotion.chatgpt-wholesale.v1.0.1.shown"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -21,8 +20,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshMenu(isCleaning: false)
         if ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1" {
             startAutomatedSmokeTest()
-        } else {
-            showFirstLaunchPromotionIfNeeded()
         }
     }
 
@@ -69,8 +66,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
 
         let promotionItem = NSMenuItem(
-            title: "推广 · ChatGPT源头批发网…",
-            action: #selector(showPromotion),
+            title: "推广 · ChatGPT源头批发网 ↗",
+            action: #selector(openPromotionWebsite),
             keyEquivalent: ""
         )
         promotionItem.image = NSImage(systemSymbolName: "megaphone", accessibilityDescription: nil)
@@ -132,20 +129,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(nil)
     }
 
-    @objc private func showPromotion() {
-        UserDefaults.standard.set(true, forKey: promotionShownKey)
-        NSApp.activate(ignoringOtherApps: true)
-
-        let alert = NSAlert()
-        alert.alertStyle = .informational
-        alert.messageText = "ChatGPT源头批发网"
-        alert.informativeText = "推广信息：该网站由 MacCleanScreen 作者运营，提供 AI 会员相关服务。推广业务与本应用的清洁功能相互独立，不代表 OpenAI 官方或授权关系。访问前请确认商品、服务条款和退款政策。"
-        alert.addButton(withTitle: "访问网站")
-        alert.addButton(withTitle: "暂不访问")
-
-        if alert.runModal() == .alertFirstButtonReturn {
-            NSWorkspace.shared.open(promotionURL)
-        }
+    @objc private func openPromotionWebsite() {
+        NSWorkspace.shared.open(promotionURL)
     }
 
     private func showPermissionAlert() {
@@ -178,11 +163,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         runner.start()
     }
 
-    private func showFirstLaunchPromotionIfNeeded() {
-        guard !UserDefaults.standard.bool(forKey: promotionShownKey) else { return }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-            self?.showPromotion()
-        }
-    }
 }

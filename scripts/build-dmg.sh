@@ -18,6 +18,8 @@ trap cleanup EXIT
 
 ditto "$app_path" "$staging_directory/MacCleanScreen.app"
 ln -s /Applications "$staging_directory/Applications"
+cp "$project_root/Resources/ChatGPT源头批发网.txt" "$staging_directory/ChatGPT源头批发网.txt"
+cp "$project_root/Resources/ChatGPT源头批发网.webloc" "$staging_directory/ChatGPT源头批发网.webloc"
 
 rm -f "$dmg_path" "$checksum_path"
 hdiutil create \

@@ -9,6 +9,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionItem: NSMenuItem?
     private var smokeTestRunner: AutomatedSmokeTestRunner?
 
+    private let promotionURL = URL(string: "https://autopixel.qzz.io/blackcat")!
+    private let promotionShownKey = "promotion.chatgpt-wholesale.v1.0.1.shown"
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         configureStatusItem()
@@ -16,7 +19,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.refreshMenu(isCleaning: isCleaning)
         }
         refreshMenu(isCleaning: false)
-        startAutomatedSmokeTestIfRequested()
+        if ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1" {
+            startAutomatedSmokeTest()
+        } else {
+            showFirstLaunchPromotionIfNeeded()
+        }
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -59,6 +66,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         permissionItem.target = self
         menu.addItem(permissionItem)
+        menu.addItem(.separator())
+
+        let promotionItem = NSMenuItem(
+            title: "推广 · ChatGPT源头批发网…",
+            action: #selector(showPromotion),
+            keyEquivalent: ""
+        )
+        promotionItem.image = NSImage(systemSymbolName: "megaphone", accessibilityDescription: nil)
+        promotionItem.target = self
+        menu.addItem(promotionItem)
         menu.addItem(.separator())
 
         let quitItem = NSMenuItem(
@@ -115,6 +132,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(nil)
     }
 
+    @objc private func showPromotion() {
+        UserDefaults.standard.set(true, forKey: promotionShownKey)
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = "ChatGPT源头批发网"
+        alert.informativeText = "推广信息：该网站提供 AI 会员相关服务，由第三方独立运营，与 MacCleanScreen 功能无关，也不代表 OpenAI 官方或授权关系。访问前请自行核实商品、服务条款和退款政策。"
+        alert.addButton(withTitle: "访问网站")
+        alert.addButton(withTitle: "暂不访问")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            NSWorkspace.shared.open(promotionURL)
+        }
+    }
+
     private func showPermissionAlert() {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
@@ -137,15 +170,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.runModal()
     }
 
-    private func startAutomatedSmokeTestIfRequested() {
-        guard ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1" else {
-            return
-        }
-
+    private func startAutomatedSmokeTest() {
         let runner = AutomatedSmokeTestRunner(cleaningController: cleaningController) { succeeded in
             Foundation.exit(succeeded ? EXIT_SUCCESS : EXIT_FAILURE)
         }
         smokeTestRunner = runner
         runner.start()
+    }
+
+    private func showFirstLaunchPromotionIfNeeded() {
+        guard !UserDefaults.standard.bool(forKey: promotionShownKey) else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+            self?.showPromotion()
+        }
     }
 }

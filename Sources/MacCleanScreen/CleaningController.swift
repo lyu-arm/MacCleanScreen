@@ -9,6 +9,7 @@ final class CleaningController {
     private var eventBlocker: EventBlocker?
     private var escapeHoldWorkItem: DispatchWorkItem?
     private var previousPresentationOptions: NSApplication.PresentationOptions = []
+    private var retiredResources: [RetiredSessionResources] = []
 
     func start(mode: CleaningMode) throws {
         guard !isCleaning else { return }
@@ -41,15 +42,20 @@ final class CleaningController {
 
         escapeHoldWorkItem?.cancel()
         escapeHoldWorkItem = nil
-        eventBlocker?.stop()
+        let retiringBlocker = eventBlocker
+        retiringBlocker?.stop()
         eventBlocker = nil
-        overlayWindows.forEach { $0.close() }
+
+        let retiringWindows = overlayWindows
+        retiringWindows.forEach { $0.orderOut(nil) }
         overlayWindows.removeAll()
         NSCursor.unhide()
         NSApp.presentationOptions = previousPresentationOptions
 
         isCleaning = false
         onStateChange?(false)
+
+        retire(windows: retiringWindows, blocker: retiringBlocker)
     }
 
     private func handleEscapeHold(_ isHolding: Bool) {
@@ -67,6 +73,28 @@ final class CleaningController {
         }
         escapeHoldWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
+    }
+
+    private func retire(windows: [OverlayWindow], blocker: EventBlocker?) {
+        let resources = RetiredSessionResources(windows: windows, blocker: blocker)
+        retiredResources.append(resources)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self, weak resources] in
+            guard let self, let resources else { return }
+            resources.windows.forEach { $0.close() }
+            self.retiredResources.removeAll { $0 === resources }
+        }
+    }
+}
+
+@MainActor
+private final class RetiredSessionResources {
+    let windows: [OverlayWindow]
+    let blocker: EventBlocker?
+
+    init(windows: [OverlayWindow], blocker: EventBlocker?) {
+        self.windows = windows
+        self.blocker = blocker
     }
 }
 

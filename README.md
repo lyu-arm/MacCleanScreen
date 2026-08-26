@@ -15,12 +15,19 @@ MacCleanScreen 是一个轻量、原生的 macOS 菜单栏清洁工具。它可�
 ## 系统要求
 
 - macOS 13 Ventura 或更高版本
+- 配备 Apple 芯片的 Mac（arm64）
 - 首次使用时授予“辅助功能”权限
 - 从源码构建时需要 Xcode Command Line Tools
 
 ## 安装
 
-当前版本可从源码构建：
+### 下载 ARM64 安装包
+
+从 [GitHub Releases](https://github.com/lyu-arm/MacCleanScreen/releases/latest) 下载名称包含 `arm64` 的 DMG，打开后将 MacCleanScreen 拖入“应用程序”文件夹。
+
+当前版本仅支持配备 Apple 芯片的 Mac。发布包使用临时签名，尚未经过 Apple Developer ID 公证；如果 macOS 阻止首次打开，请优先选择从源码自行构建并审查代码。
+
+### 从源码构建
 
 ```bash
 git clone https://github.com/lyu-arm/MacCleanScreen.git

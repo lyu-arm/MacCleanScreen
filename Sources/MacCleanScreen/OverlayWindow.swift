@@ -16,6 +16,7 @@ final class OverlayWindow: NSWindow {
         level = .screenSaver
         backgroundColor = mode == .screen ? .black : .clear
         isOpaque = mode == .screen
+        isReleasedWhenClosed = false
         hasShadow = false
         ignoresMouseEvents = false
         collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]

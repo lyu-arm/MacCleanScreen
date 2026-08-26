@@ -31,20 +31,19 @@ jobs:
           sw_vers
           swift --version
 
-      - name: 编译应用
-        run: ./scripts/build-app.sh
+      - name: 构建 ARM64 安装镜像
+        run: ./scripts/build-dmg.sh
 
       - name: 验证应用包
         run: |
           plutil -lint dist/MacCleanScreen.app/Contents/Info.plist
           codesign --verify --deep --strict --verbose=2 dist/MacCleanScreen.app
 
-      - name: 打包构建产物
-        run: ditto -c -k --sequesterRsrc --keepParent dist/MacCleanScreen.app MacCleanScreen.zip
-
       - name: 上传构建产物
         uses: actions/upload-artifact@v7
         with:
-          path: MacCleanScreen.zip
-          archive: false
+          name: MacCleanScreen-arm64
+          path: |
+            dist/MacCleanScreen-*-arm64.dmg
+            dist/MacCleanScreen-*-arm64.dmg.sha256
           retention-days: 14

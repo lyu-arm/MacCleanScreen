@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var screenCleaningItem: NSMenuItem?
     private var keyboardCleaningItem: NSMenuItem?
     private var permissionItem: NSMenuItem?
+    private var smokeTestRunner: AutomatedSmokeTestRunner?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -15,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.refreshMenu(isCleaning: isCleaning)
         }
         refreshMenu(isCleaning: false)
+        startAutomatedSmokeTestIfRequested()
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -133,5 +135,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = "无法启动清洁模式"
         alert.informativeText = message
         alert.runModal()
+    }
+
+    private func startAutomatedSmokeTestIfRequested() {
+        guard ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1" else {
+            return
+        }
+
+        let runner = AutomatedSmokeTestRunner(cleaningController: cleaningController) { succeeded in
+            Foundation.exit(succeeded ? EXIT_SUCCESS : EXIT_FAILURE)
+        }
+        smokeTestRunner = runner
+        runner.start()
     }
 }

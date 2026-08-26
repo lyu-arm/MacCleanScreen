@@ -107,9 +107,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func refreshMenu(isCleaning: Bool) {
         screenCleaningItem?.isEnabled = !isCleaning
         keyboardCleaningItem?.isEnabled = !isCleaning
-        permissionItem?.title = AccessibilityPermission.isGranted
-            ? "辅助功能权限：已授权 ✓"
-            : "辅助功能权限：授权尚未生效…"
+        let isPermissionGranted = AccessibilityPermission.isGranted
+        permissionItem?.isHidden = isPermissionGranted
+        permissionItem?.title = "辅助功能权限：授权尚未生效…"
     }
 
     @objc private func startScreenCleaning() {

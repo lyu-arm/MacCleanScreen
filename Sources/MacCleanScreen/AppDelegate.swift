@@ -18,8 +18,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.refreshMenu(isCleaning: isCleaning)
         }
         refreshMenu(isCleaning: false)
-        if ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1" {
+        let isSmokeTest = ProcessInfo.processInfo.environment["MACCLEANSCREEN_SMOKE_TEST"] == "1"
+        if isSmokeTest {
             startAutomatedSmokeTest()
+        } else if !AccessibilityPermission.isGranted {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                AccessibilityPermission.request()
+            }
         }
     }
 

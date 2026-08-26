@@ -139,7 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let alert = NSAlert()
         alert.alertStyle = .informational
         alert.messageText = "ChatGPT源头批发网"
-        alert.informativeText = "推广信息：该网站提供 AI 会员相关服务，由第三方独立运营，与 MacCleanScreen 功能无关，也不代表 OpenAI 官方或授权关系。访问前请自行核实商品、服务条款和退款政策。"
+        alert.informativeText = "推广信息：该网站由 MacCleanScreen 作者运营，提供 AI 会员相关服务。推广业务与本应用的清洁功能相互独立，不代表 OpenAI 官方或授权关系。访问前请确认商品、服务条款和退款政策。"
         alert.addButton(withTitle: "访问网站")
         alert.addButton(withTitle: "暂不访问")
 

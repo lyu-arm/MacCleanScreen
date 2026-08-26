@@ -18,27 +18,18 @@ MacCleanScreen 是一个轻量、原生的 macOS 菜单栏清洁工具。它可�
 - 首次使用时授予“辅助功能”权限
 - 从源码构建时需要 Xcode Command Line Tools
 
-## 使用本地应用
+## 安装
 
-当前已经构建好的应用位于：
-
-```text
-/Users/lyu/MacCleanScreen/dist/MacCleanScreen.app
-```
-
-可以在终端中直接打开：
+当前版本可从源码构建：
 
 ```bash
-open /Users/lyu/MacCleanScreen/dist/MacCleanScreen.app
+git clone https://github.com/lyu-arm/MacCleanScreen.git
+cd MacCleanScreen
+./scripts/build-app.sh
+open dist/MacCleanScreen.app
 ```
 
-也可以在 Finder 中按 `Command + Shift + G`，输入：
-
-```text
-/Users/lyu/MacCleanScreen/dist
-```
-
-然后双击 `MacCleanScreen.app`。如果希望长期使用，可以将它拖到“应用程序”文件夹。
+构建完成后，可以将 `dist/MacCleanScreen.app` 拖入“应用程序”文件夹。建议先移动应用，再授予辅助功能权限。
 
 MacCleanScreen 是菜单栏应用，启动后不会显示普通窗口，也不会出现在程序坞中。请在屏幕顶部菜单栏寻找带有闪光效果的矩形图标。
 
@@ -54,8 +45,6 @@ MacCleanScreen 是菜单栏应用，启动后不会显示普通窗口，也不�
 6. 打开 MacCleanScreen 旁边的开关。
 7. 如果系统要求重新打开应用，请退出并重新启动 MacCleanScreen。
 8. 再次从菜单栏选择需要的清洁模式。
-
-如果将应用从 `dist` 移动到“应用程序”文件夹，macOS 可能会将其视为新的应用位置。建议先移动应用，再授予辅助功能权限。
 
 ## 清洁屏幕
 
@@ -79,30 +68,6 @@ MacCleanScreen 是菜单栏应用，启动后不会显示普通窗口，也不�
 在未进入清洁模式时，点击菜单栏图标并选择“退出 MacCleanScreen”。
 
 如果正在清洁模式中，请先长按 `Esc` 3 秒退出清洁模式，再从菜单栏退出应用。
-
-## 从源码构建
-
-```bash
-git clone https://github.com/lyu-arm/MacCleanScreen.git
-cd MacCleanScreen
-./scripts/build-app.sh
-open dist/MacCleanScreen.app
-```
-
-生成的应用位于 `dist/MacCleanScreen.app`，构建脚本会为本地应用添加临时签名。
-
-## GitHub Actions 自动构建
-
-以下情况会自动生成 GitHub Actions 构建记录：
-
-- 推送代码到 `master` 分支；
-- 创建或更新 Pull Request；
-- 在 Actions 页面手动运行工作流。
-
-工作流会在 GitHub 的 macOS 环境中编译应用、检查 `Info.plist`、验证应用签名并生成 `MacCleanScreen.zip`。成功后可在对应运行记录的 Artifacts 区域下载构建产物，文件保留 14 天。
-
-- [查看所有构建记录](https://github.com/lyu-arm/MacCleanScreen/actions)
-- [查看构建工作流](https://github.com/lyu-arm/MacCleanScreen/actions/workflows/build.yml)
 
 ## 使用限制
 

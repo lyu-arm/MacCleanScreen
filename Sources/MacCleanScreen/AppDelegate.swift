@@ -1,7 +1,7 @@
 import AppKit
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let cleaningController = CleaningController()
     private var statusItem: NSStatusItem?
     private var screenCleaningItem: NSMenuItem?
@@ -28,6 +28,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateNow
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        refreshMenu(isCleaning: cleaningController.isCleaning)
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        refreshMenu(isCleaning: cleaningController.isCleaning)
+    }
+
     private func configureStatusItem() {
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
@@ -38,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
+        menu.delegate = self
         let screenCleaningItem = NSMenuItem(
             title: "清洁屏幕",
             action: #selector(startScreenCleaning),
@@ -94,8 +103,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         screenCleaningItem?.isEnabled = !isCleaning
         keyboardCleaningItem?.isEnabled = !isCleaning
         permissionItem?.title = AccessibilityPermission.isGranted
-            ? "辅助功能权限：已授予"
-            : "辅助功能权限：需要授予…"
+            ? "辅助功能权限：已授权 ✓"
+            : "辅助功能权限：授权尚未生效…"
     }
 
     @objc private func startScreenCleaning() {

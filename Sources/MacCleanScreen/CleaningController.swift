@@ -11,6 +11,7 @@ final class CleaningController {
     private var previousPresentationOptions: NSApplication.PresentationOptions = []
     private var retiredResources: [RetiredSessionResources] = []
     private var isCursorHidden = false
+    private var isMouseCursorDisconnected = false
 
     func start(mode: CleaningMode) throws {
         guard !isCleaning else { return }
@@ -32,6 +33,8 @@ final class CleaningController {
             window.orderFrontRegardless()
             return window
         }
+        NSApp.activate(ignoringOtherApps: true)
+        isMouseCursorDisconnected = CGAssociateMouseAndMouseCursorPosition(0) == .success
         isCursorHidden = CGDisplayHideCursor(CGMainDisplayID()) == .success
 
         isCleaning = true
@@ -50,6 +53,10 @@ final class CleaningController {
         let retiringWindows = overlayWindows
         retiringWindows.forEach { $0.orderOut(nil) }
         overlayWindows.removeAll()
+        if isMouseCursorDisconnected {
+            CGAssociateMouseAndMouseCursorPosition(1)
+            isMouseCursorDisconnected = false
+        }
         if isCursorHidden {
             CGDisplayShowCursor(CGMainDisplayID())
             isCursorHidden = false

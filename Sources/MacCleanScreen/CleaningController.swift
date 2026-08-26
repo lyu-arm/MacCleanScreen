@@ -10,6 +10,7 @@ final class CleaningController {
     private var escapeHoldWorkItem: DispatchWorkItem?
     private var previousPresentationOptions: NSApplication.PresentationOptions = []
     private var retiredResources: [RetiredSessionResources] = []
+    private var isCursorHidden = false
 
     func start(mode: CleaningMode) throws {
         guard !isCleaning else { return }
@@ -31,7 +32,7 @@ final class CleaningController {
             window.orderFrontRegardless()
             return window
         }
-        NSCursor.hide()
+        isCursorHidden = CGDisplayHideCursor(CGMainDisplayID()) == .success
 
         isCleaning = true
         onStateChange?(true)
@@ -49,7 +50,10 @@ final class CleaningController {
         let retiringWindows = overlayWindows
         retiringWindows.forEach { $0.orderOut(nil) }
         overlayWindows.removeAll()
-        NSCursor.unhide()
+        if isCursorHidden {
+            CGDisplayShowCursor(CGMainDisplayID())
+            isCursorHidden = false
+        }
         NSApp.presentationOptions = previousPresentationOptions
 
         isCleaning = false
